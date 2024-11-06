@@ -2,11 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main  # Déclenche sur chaque push vers la branche main
-  pull_request:
-    branches:
-      - main
+    paths:
+      - 'Docker/**'  # Déclencher uniquement pour les changements dans le dossier `docker`
 
 jobs:
   build:
