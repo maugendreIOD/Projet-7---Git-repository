@@ -1,7 +1,7 @@
 steps:
   # Étape 1 : Construire l'image Docker
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/projet-7-open-scoring/openclassrooms-api:latest', '-f', 'Docker/Dockerfile', '.']
+    args: ['build', '-t', 'gcr.io/projet-7-open-scoring/openclassrooms-api:latest', '-f', 'Docker/Dockerfile', 'Docker']
 
   # Étape 2 : Pousser l'image sur Container Registry
   - name: 'gcr.io/cloud-builders/docker'
