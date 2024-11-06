@@ -12,7 +12,7 @@ steps:
     entrypoint: 'gcloud'
     args: [
       'run', 'deploy', 'openclassrooms-api',
-      '--image', ' gcr.io/projet-7-open-scoring/openclassrooms-api:latest',
+      '--image', 'gcr.io/projet-7-open-scoring/openclassrooms-api:latest',
       '--platform', 'managed',
       '--region', 'us-central1',
       '--allow-unauthenticated'
