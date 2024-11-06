@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 
-# Test de test github actions
+# Test de test github actions test 2
 # Charger le modèle au démarrage de l'application
 # Remplace 'model.pkl' par le chemin de ton fichier de modèle
 model = joblib.load('linear_regression_model.pkl')
