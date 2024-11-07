@@ -1,10 +1,9 @@
-# tests/test_api.py
 import pytest
-from my_app import create_app
+import json
+from main import app  # Importez directement app depuis main.py
 
 @pytest.fixture
 def client():
-    app = create_app()
     app.config['TESTING'] = True
     with app.test_client() as client:
         yield client
