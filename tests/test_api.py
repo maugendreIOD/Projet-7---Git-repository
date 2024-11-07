@@ -1,6 +1,6 @@
 import pytest
 import json
-from main import app  # Importez directement app depuis main.py
+from app.main import app  # Importez directement app depuis main.py
 
 @pytest.fixture
 def client():
