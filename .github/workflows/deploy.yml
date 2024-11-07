@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Étape 0 : Extraire le code du dépôt
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
       # Étape 1 : Authentification avec Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0
