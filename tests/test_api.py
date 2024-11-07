@@ -1,18 +1,52 @@
 import pytest
 import json
-from app.main import app  # Importez directement app depuis main.py
+import os
+from app.main import app
+import pathlib
 
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
+    os.environ['FLASK_TESTING'] = 'true'
     with app.test_client() as client:
         yield client
 
-def test_predict_endpoint(client):
-    # Charger les données depuis le fichier JSON
-    with open('test_data.json') as f:
-        data = json.load(f)
+@pytest.fixture
+def test_data():
+    """Charge les données de test depuis le fichier JSON"""
+    test_data_path = pathlib.Path(__file__).parent / 'test_data.json'
+    with open(test_data_path) as f:
+        return json.load(f)
 
-    response = client.post('/predict', json=data)
+def test_predict_endpoint_with_sample_data(client):
+    """Test avec une seule feature simple - utile pour les tests de base"""
+    simple_data = {
+        "features": [2.5]
+    }
+    response = client.post('/predict', json=simple_data)
     assert response.status_code == 200
     assert "prediction" in response.json
+
+def test_predict_endpoint_with_real_data(client, test_data):
+    """Test avec les vraies données du fichier test_data.json"""
+    response = client.post('/predict', json=test_data)
+    assert response.status_code == 200
+    assert "prediction" in response.json
+
+def test_predict_endpoint_with_empty_features(client):
+    """Test avec des features vides pour vérifier la gestion d'erreur"""
+    empty_data = {
+        "features": []
+    }
+    response = client.post('/predict', json=empty_data)
+    assert response.status_code == 400
+    assert "error" in response.json
+
+def test_predict_endpoint_with_invalid_data(client):
+    """Test avec des données invalides pour vérifier la gestion d'erreur"""
+    invalid_data = {
+        "wrong_key": [1, 2, 3]
+    }
+    response = client.post('/predict', json=invalid_data)
+    assert response.status_code == 400
+    assert "error" in response.json
