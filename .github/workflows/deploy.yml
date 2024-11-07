@@ -23,7 +23,7 @@ jobs:
 
       # Étape 3 : Construire l'image Docker
       - name: Build Docker image
-        run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest .
+        run: docker build -f Docker/Dockerfile -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest .
         
       # Étape 4 : Exécuter les tests
       - name: Run Tests
