@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Docker/**'  # Déclencher uniquement pour les changements dans le dossier `docker`
+      - 'app/**'
 
 jobs:
   build:
@@ -28,7 +29,10 @@ jobs:
       # Étape 4 : Exécuter les tests
       - name: Run Tests
         run: |
-          docker run --rm gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest pytest tests/
+          docker run --rm \
+            -e PYTHONPATH=/app/app \
+            gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest \
+            pytest tests/ -v
           
       # Étape 5 : Pousser l'image Docker dans Google Container Registry
       - name: Push Docker image to Google Container Registry
