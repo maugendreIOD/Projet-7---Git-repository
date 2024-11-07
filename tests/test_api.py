@@ -29,11 +29,18 @@ def test_predict_endpoint_with_sample_data(client):
 
 def test_predict_endpoint_with_real_data(client, test_data):
     """Test avec les vraies données du fichier test_data.json"""
-    response = client.post('/predict', json={"features": test_data})
+    # Créez le payload en extrayant les valeurs du dictionnaire
+    payload = {"features": list(test_data.values())}
+    
+    # Envoyer la requête à l'API
+    response = client.post('/predict', json=payload)
+    
+    # Afficher un message d'erreur si la réponse n'est pas 200
     if response.status_code != 200:
         print("Erreur retournée par l'API :", response.json)
     assert response.status_code == 200
     assert "prediction" in response.json
+
 
 def test_predict_endpoint_with_empty_features(client):
     """Test avec des features vides pour vérifier la gestion d'erreur"""
