@@ -16,11 +16,11 @@ is_testing = os.environ.get('FLASK_TESTING') == 'true'
 # Charge le modèle ou crée un modèle fictif pour les tests
 try:
     if is_testing:
-        # Crée un modèle fictif pour les tests
+        # Crée un modèle fictif pour les tests avec le bon nombre de caractéristiques
         model = LogisticRegression()
-        # Données factices pour l'entraînement
-        X = np.array([[1], [2], [3], [4]])
-        y = np.array([0, 0, 1, 1])
+        # Données factices avec 536 caractéristiques pour correspondre au modèle de production
+        X = np.random.rand(10, 536)  # 10 exemples, chacun avec 536 caractéristiques
+        y = np.random.randint(0, 2, 10)  # Cibles binaires pour l'entraînement
         model.fit(X, y)
     else:
         # Charge le vrai modèle en production
