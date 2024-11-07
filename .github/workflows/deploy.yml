@@ -26,13 +26,12 @@ jobs:
       - name: Build Docker image
         run: docker build -f Docker/Dockerfile -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest .
         
-      # Étape 4 : Exécuter les tests
       - name: Run Tests
         run: |
           docker run --rm \
-            -e PYTHONPATH=/app/app \
+            -e PYTHONPATH=/app \
             gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest \
-            pytest tests/ -v
+            python -m pytest tests/ -v
           
       # Étape 5 : Pousser l'image Docker dans Google Container Registry
       - name: Push Docker image to Google Container Registry
