@@ -12,7 +12,7 @@ jobs:
     steps:
       # Étape 1 : Checkout du code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Étape 2 : Configuration de Google Cloud SDK
       - name: Set up Google Cloud SDK
@@ -20,16 +20,25 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
 
-      # Étape 3 : Construire et tester
-      - name: Build and Test
+      # Étape 3 : Construire l'image Docker
+      - name: Build Docker image
+        run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest .
+        
+      # Étape 4 : Exécuter les tests
+      - name: Run Tests
         run: |
-          docker build -t openclassrooms-api .
-          pip install -r requirements.txt
-          pytest test/
+          docker run --rm gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest pytest tests/
+          
+      # Étape 5 : Pousser l'image Docker dans Google Container Registry
+      - name: Push Docker image to Google Container Registry
+        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest
 
-      # Étape 4 : Pusher l'image Docker et déployer sur Cloud Run
+      # Étape 6 : Déployer sur Cloud Run
       - name: Deploy to Cloud Run
         run: |
-          gcloud builds submit --config cloudbuild.yaml
+          gcloud run deploy openclassrooms-api \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated
