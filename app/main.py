@@ -7,9 +7,26 @@ import os
 app = Flask(__name__)
 
 # Test de test github actions test 5
-# Charger le modèle au démarrage de l'application
-# Remplace 'model.pkl' par le chemin de ton fichier de modèle
-model = joblib.load('linear_regression_model.pkl')
+
+# Détermine si nous sommes en mode test
+is_testing = os.environ.get('FLASK_TESTING') == 'true'
+
+# Charge le modèle ou crée un modèle fictif pour les tests
+try:
+    if is_testing:
+        # Crée un modèle fictif pour les tests
+        model = LogisticRegression()
+        # Données factices pour l'entraînement
+        X = np.array([[1], [2], [3], [4]])
+        y = np.array([0, 0, 1, 1])
+        model.fit(X, y)
+    else:
+        # Charge le vrai modèle en production
+        model_path = os.path.join(os.path.dirname(__file__), 'linear_regression_model.pkl')
+        model = joblib.load(model_path)
+except Exception as e:
+    print(f"Erreur lors du chargement du modèle: {str(e)}")
+    raise
 
 @app.route('/predict', methods=['POST'])
 def predict():
