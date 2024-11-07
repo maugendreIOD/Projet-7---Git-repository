@@ -13,12 +13,15 @@ RUN apt-get update && apt-get install -y \
 # Créer un répertoire pour l'application
 WORKDIR /app
 
-# Copier les fichiers requirements.txt et installer les dépendances
-COPY Docker/requirements.txt .
+# Copier les fichiers requirements.txt depuis le dossier Docker et installer les dépendances
+COPY Docker/requirements.txt .  
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier tout le code dans le conteneur
-COPY . /app
+# Copier le code de l'application depuis le dossier app de la racine
+COPY ../app /app
+
+# Copier le dossier des tests pour les exécuter ensuite
+COPY ../tests /app/tests
 
 # Exposer le port sur lequel Flask écoute (8080 pour Google Cloud Run)
 EXPOSE 8080
