@@ -18,15 +18,18 @@ COPY Docker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le code de l'application depuis le dossier app de la racine
-COPY app /app
-
-# Copier le dossier des tests pour les exécuter ensuite
+COPY app /app/app
+# Copier le dossier des tests
 COPY tests /app/tests
-RUN ls -la /app
+
+# Add a simple pytest.ini file
+RUN echo "[pytest]\npythonpath = /app/app" > pytest.ini
+
+# Make sure our app directory is in PYTHONPATH
+ENV PYTHONPATH="${PYTHONPATH}:/app/app"
 
 # Exposer le port sur lequel Flask écoute (8080 pour Google Cloud Run)
 EXPOSE 8080
 
 # Lancer l'application Flask
-CMD ["python", "main.py"]
-
+CMD ["python", "app/main.py"]
