@@ -11,16 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Étape 1 : Checkout du code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Étape 1 : Authentification avec Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # Étape 2 : Configuration de Google Cloud SDK
+      # Étape 2A : Configuration de Google Cloud SDK
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          credentials: ${{ secrets.GCP_SA_KEY }}
+
+      # Étape 2B : Authentification Docker pour GCR
+      - name: Authenticate Docker to Google Container Registry
+        run: gcloud auth configure-docker
 
       # Étape 3 : Construire l'image Docker
       - name: Build Docker image
