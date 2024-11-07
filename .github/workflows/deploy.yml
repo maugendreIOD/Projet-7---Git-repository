@@ -26,6 +26,10 @@ jobs:
       # Étape 2B : Authentification Docker pour GCR
       - name: Authenticate Docker to Google Container Registry
         run: gcloud auth configure-docker
+      
+      # Étape 2C : Debugging - Lister les fichiers pour vérifier la structure
+      - name: List files for debugging
+        run: ls -R
 
       # Étape 3 : Construire l'image Docker
       - name: Build Docker image
