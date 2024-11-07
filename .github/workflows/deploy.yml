@@ -31,6 +31,21 @@ jobs:
       - name: List files for debugging
         run: ls -R
 
+      # Étape 2D : Vérifier les permissions du fichier Dockerfile
+      - name: Check permissions for Dockerfile
+        run: ls -l Docker/Dockerfile
+
+      # Étape 2E : Fix permissions si nécessaire
+      - name: Fix permissions for Dockerfile if needed
+        run: chmod 644 Docker/Dockerfile
+
+      # Étape 2F : Cacher les dépendances (avec une clé unique pour éviter les problèmes de cache)
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache
+          key: ${{ runner.os }}-cache-key-${{ github.run_id }}
+          
       # Étape 3 : Construire l'image Docker
       - name: Build Docker image
         run: docker build -f Docker/Dockerfile -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/openclassrooms-api:latest .
