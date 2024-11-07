@@ -29,7 +29,9 @@ def test_predict_endpoint_with_sample_data(client):
 
 def test_predict_endpoint_with_real_data(client, test_data):
     """Test avec les vraies données du fichier test_data.json"""
-    response = client.post('/predict', json=test_data)
+    response = client.post('/predict', json={"features": test_data})
+    if response.status_code != 200:
+        print("Erreur retournée par l'API :", response.json)
     assert response.status_code == 200
     assert "prediction" in response.json
 
