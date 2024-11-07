@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copier les fichiers requirements.txt et installer les dépendances
-COPY requirements.txt .
+COPY Docker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier tout le code dans le conteneur
