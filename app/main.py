@@ -3,6 +3,8 @@ import json
 import joblib  # Utilisé pour charger un modèle scikit-learn
 import numpy as np
 import os
+from sklearn.linear_model import LogisticRegression  # Pour le modèle de test
+import pandas as pd
 
 app = Flask(__name__)
 
