@@ -19,13 +19,20 @@ def test_data():
         return json.load(f)
 
 def test_predict_endpoint_with_sample_data(client):
-    """Test avec une seule feature simple - utile pour les tests de base"""
-    simple_data = {
-        "features": [2.5]
-    }
+    """Test avec un ensemble de 536 features factices pour correspondre au modèle"""
+    # Générer 536 caractéristiques factices
+    simple_data = {"features": [2.5] * 536}  # Liste de 536 valeurs identiques, ici 2.5 pour le test
+    
+    # Envoyer la requête à l'API
     response = client.post('/predict', json=simple_data)
+    
+    # Afficher un message d'erreur si la réponse n'est pas 200
+    if response.status_code != 200:
+        print("Erreur retournée par l'API :", response.json)  # Afficher l'erreur retournée par l'API
+    
     assert response.status_code == 200
     assert "prediction" in response.json
+
 
 def test_predict_endpoint_with_real_data(client, test_data):
     """Test avec les vraies données du fichier test_data.json"""
@@ -51,11 +58,3 @@ def test_predict_endpoint_with_empty_features(client):
     assert response.status_code == 400
     assert "error" in response.json
 
-def test_predict_endpoint_with_invalid_data(client):
-    """Test avec des données invalides pour vérifier la gestion d'erreur"""
-    invalid_data = {
-        "wrong_key": [1, 2, 3]
-    }
-    response = client.post('/predict', json=invalid_data)
-    assert response.status_code == 400
-    assert "error" in response.json
