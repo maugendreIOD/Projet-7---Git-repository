@@ -1,4 +1,7 @@
 from flask import Flask, request, jsonify
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import MinMaxScaler
 import json
 import joblib  # Utilisé pour charger un modèle scikit-learn
 import numpy as np
@@ -9,6 +12,12 @@ import pandas as pd
 app = Flask(__name__)
 
 # Test de test github actions test 17
+
+# Définir le pipeline de prétraitement
+preprocessing_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', MinMaxScaler(feature_range=(0, 1)))
+])
 
 # Détermine si nous sommes en mode test
 is_testing = os.environ.get('FLASK_TESTING') == 'true'
