@@ -7,6 +7,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+from app.main import app, preprocessing_pipeline
+
 
 @pytest.fixture
 def client():
