@@ -13,22 +13,31 @@ app = Flask(__name__)
 # Détermine si nous sommes en mode test
 is_testing = os.environ.get('FLASK_TESTING') == 'true'
 
-# Charge le modèle ou crée un modèle fictif pour les tests
 try:
     if is_testing:
-        # Crée un modèle fictif pour les tests avec le bon nombre de caractéristiques
+        # Crée un modèle fictif pour les tests
         model = LogisticRegression()
-        # Données factices avec 536 caractéristiques pour correspondre au modèle de production
-        X = np.random.rand(10, 536)  # 10 exemples, chacun avec 536 caractéristiques
-        y = np.random.randint(0, 2, 10)  # Cibles binaires pour l'entraînement
-        model.fit(X, y)
+        X = np.random.rand(10, 536)  # Exemple de données (10 exemples, 536 caractéristiques)
+        y = np.random.randint(0, 2, 10)
+        
+        # Ajuste le pipeline sur les données brutes
+        preprocessing_pipeline.fit(X)
+        
+        # Prétraite les données pour l'entraînement du modèle
+        X_processed = preprocessing_pipeline.transform(X)
+        
+        # Entraîne le modèle sur les données prétraitées
+        model.fit(X_processed, y)
     else:
-        # Charge le vrai modèle en production
+        # Charge le vrai modèle et le pipeline de prétraitement en production
         model_path = os.path.join(os.path.dirname(__file__), 'linear_regression_model.pkl')
+        pipeline_path = os.path.join(os.path.dirname(__file__), 'preprocessing_pipeline.pkl')
         model = joblib.load(model_path)
+        preprocessing_pipeline = joblib.load(pipeline_path)
 except Exception as e:
-    print(f"Erreur lors du chargement du modèle: {str(e)}")
+    print(f"Erreur lors du chargement du modèle ou du pipeline : {str(e)}")
     raise
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -44,10 +53,13 @@ def predict():
         # Convertir les features en un format compatible avec ton modèle (ex: numpy array)
         features_array = np.array(features).reshape(1, -1)  # Reshape si une seule instance
 
+        # Appliquer le pipeline de prétraitement
+        processed_features = preprocessing_pipeline.transform(features_array)
+
         # Utiliser le modèle pour prédire
-        prediction = model.predict(features_array)
+        prediction = model.predict(processed_features)
         # Ajout pour obtenir la probabilité
-        probability = model.predict_proba(features_array)[0]
+        probability = model.predict_proba(processed_features)[0]
         
         # Retourner la prédiction et les explications SHAP sous forme de JSON
         return jsonify({
