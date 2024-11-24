@@ -3,6 +3,9 @@ import json
 import os
 from app.main import app
 import pathlib
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import MinMaxScaler
 
 @pytest.fixture
 def client():
@@ -17,6 +20,12 @@ def test_data():
     test_data_path = pathlib.Path(__file__).parent / 'test_data.json'
     with open(test_data_path) as f:
         return json.load(f)
+
+# Définir le pipeline de prétraitement
+preprocessing_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', MinMaxScaler(feature_range=(0, 1)))
+])
 
 def test_predict_endpoint_with_sample_data(client):
     """Test avec un ensemble de 536 features factices pour correspondre au modèle"""
