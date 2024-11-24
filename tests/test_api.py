@@ -23,9 +23,12 @@ def test_predict_endpoint_with_sample_data(client):
     # Générer 536 caractéristiques factices
     simple_data = {"features": [2.5] * 536}  # Liste de 536 valeurs identiques, ici 2.5 pour le test
     
+    # Prétraitez les données factices via le pipeline (adapter le reshape si nécessaire)
+    processed_data = preprocessing_pipeline.transform(np.array(simple_data["features"]).reshape(1, -1))
+
     # Envoyer la requête à l'API
-    response = client.post('/predict', json=simple_data)
-    
+    response = client.post('/predict', json={"features": processed_data.tolist()[0]})
+
     # Afficher un message d'erreur si la réponse n'est pas 200
     if response.status_code != 200:
         print("Erreur retournée par l'API :", response.json)  # Afficher l'erreur retournée par l'API
@@ -39,8 +42,11 @@ def test_predict_endpoint_with_real_data(client, test_data):
     # Créez le payload en extrayant les valeurs du dictionnaire
     payload = {"features": list(test_data.values())}
     
+    # Prétraitez les données factices via le pipeline (adapter le reshape si nécessaire)
+    processed_data = preprocessing_pipeline.transform(np.array(payload["features"]).reshape(1, -1))
+
     # Envoyer la requête à l'API
-    response = client.post('/predict', json=payload)
+    response = client.post('/predict', json={"features": processed_data.tolist()[0]})
     
     # Afficher un message d'erreur si la réponse n'est pas 200
     if response.status_code != 200:
