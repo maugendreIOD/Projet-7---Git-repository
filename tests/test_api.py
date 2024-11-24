@@ -6,6 +6,7 @@ import pathlib
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import MinMaxScaler
+import numpy as np
 
 @pytest.fixture
 def client():
