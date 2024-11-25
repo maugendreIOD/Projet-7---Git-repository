@@ -24,21 +24,17 @@ def test_data():
     with open(test_data_path) as f:
         return json.load(f)
 
-# Définir le pipeline de prétraitement
-preprocessing_pipeline = Pipeline([
-    ('imputer', SimpleImputer(strategy='median')),
-    ('scaler', MinMaxScaler(feature_range=(0, 1)))
-])
 
 def test_predict_endpoint_with_sample_data(client):
     """Test avec un ensemble de 536 features factices pour correspondre au modèle"""
     # Générer 536 caractéristiques factices
     simple_data = {"features": [2.5] * 536}  # Liste de 536 valeurs identiques, ici 2.5 pour le test
     
-    preprocessing_pipeline.fit(simple_data)
+    # Convertir les features en tableau numpy (reshape nécessaire pour transformer 1 ligne)
+    features_array = np.array(simple_data["features"]).reshape(1, -1)
 
     # Prétraitez les données factices via le pipeline (adapter le reshape si nécessaire)
-    processed_data = preprocessing_pipeline.transform(np.array(simple_data["features"]).reshape(1, -1))
+    processed_data = preprocessing_pipeline.transform(features_array)
 
     # Envoyer la requête à l'API
     response = client.post('/predict', json={"features": processed_data.tolist()[0]})
@@ -56,8 +52,11 @@ def test_predict_endpoint_with_real_data(client, test_data):
     # Créez le payload en extrayant les valeurs du dictionnaire
     payload = {"features": list(test_data.values())}
     
+    # Convertir les features en tableau numpy (reshape nécessaire pour transformer 1 ligne)
+    features_array = np.array(payload["features"]).reshape(1, -1)
+    
     # Prétraitez les données factices via le pipeline (adapter le reshape si nécessaire)
-    processed_data = preprocessing_pipeline.transform(np.array(payload["features"]).reshape(1, -1))
+    processed_data = preprocessing_pipeline.transform(features_array)
 
     # Envoyer la requête à l'API
     response = client.post('/predict', json={"features": processed_data.tolist()[0]})
