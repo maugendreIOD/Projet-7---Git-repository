@@ -30,7 +30,7 @@ def test_predict_endpoint_with_sample_data(client):
     simple_data = {"features": [2.5] * 536}  # Liste de 536 valeurs identiques, ici 2.5 pour le test
 
     # Envoyer la requête à l'API
-    response = client.post('/predict', json={"features": simple_data.tolist()[0]})
+    response = client.post('/predict', json=simple_data)
 
     # Afficher un message d'erreur si la réponse n'est pas 200
     if response.status_code != 200:
@@ -46,7 +46,7 @@ def test_predict_endpoint_with_real_data(client, test_data):
     payload = {"features": list(test_data.values())}
 
     # Envoyer la requête à l'API
-    response = client.post('/predict', json={"features": payload.tolist()[0]})
+    response = client.post('/predict', json=payload)
     
     # Afficher un message d'erreur si la réponse n'est pas 200
     if response.status_code != 200:
