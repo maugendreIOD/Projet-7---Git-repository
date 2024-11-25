@@ -11,7 +11,7 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Test de test github actions test 20
+# Test de test github actions test 21
 
 # Définir le pipeline de prétraitement
 preprocessing_pipeline = Pipeline([

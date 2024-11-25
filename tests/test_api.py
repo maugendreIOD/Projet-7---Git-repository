@@ -35,6 +35,8 @@ def test_predict_endpoint_with_sample_data(client):
     # Générer 536 caractéristiques factices
     simple_data = {"features": [2.5] * 536}  # Liste de 536 valeurs identiques, ici 2.5 pour le test
     
+    preprocessing_pipeline.fit(simple_data)
+
     # Prétraitez les données factices via le pipeline (adapter le reshape si nécessaire)
     processed_data = preprocessing_pipeline.transform(np.array(simple_data["features"]).reshape(1, -1))
 
