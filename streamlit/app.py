@@ -9,10 +9,13 @@ from PIL import Image
 import joblib
 
 # URL de ton API Flask locale pour la prédiction
-api_url = 'https://openclassrooms-api-262775559739.us-central1.run.app/predict'
+api_url = 'https://openclassrooms-api-2-262775559739.us-central1.run.app/predict'
 
 # Charger l'explainer SHAP local
 explainer = joblib.load('shap_explainer.joblib')  # Explainer SHAP local
+
+# Charger le pipeline de pré-traitement
+pipeline_retenu = joblib.load("preprocessing_pipeline.pkl")
 
 # Configurer la page Streamlit
 st.set_page_config(page_title="Prédictions d'un modèle de scoring bancaire", page_icon="dart", layout="wide", initial_sidebar_state="auto")
@@ -39,7 +42,7 @@ if uploaded_file is not None:
     try:
         # Charger le fichier JSON dans un DataFrame
         data = pd.read_json(uploaded_file)
-        
+
         # Vérifier que la colonne 'SK_ID_CURR' existe
         if 'SK_ID_CURR' not in data.columns:
             st.error("Le fichier JSON doit contenir une colonne 'SK_ID_CURR'.")
@@ -105,12 +108,11 @@ if uploaded_file is not None:
                             unsafe_allow_html=True
                         )
 
+                        selected_data_processed = pipeline_retenu.transform(selected_data)
 
                         # Utiliser la prédiction pour calculer les valeurs SHAP localement
-                        selected_data_np = selected_data.values  # Convertir en NumPy array pour SHAP
-
                         # Calcul des valeurs SHAP localement
-                        shap_values = explainer.shap_values(selected_data_np)
+                        shap_values = explainer.shap_values(selected_data_processed)
 
                         st.header("Variables importantes pour le dossier")
     
@@ -119,7 +121,7 @@ if uploaded_file is not None:
                         explanation = shap.Explanation(
                             values=shap_values[0],
                             base_values=explainer.expected_value,
-                            data=selected_data_np[0],
+                            data=selected_data_processed[0],
                             feature_names=selected_data.columns
                         )
                         fig, ax = plt.subplots()
