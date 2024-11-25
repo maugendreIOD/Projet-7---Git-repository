@@ -26,17 +26,14 @@ try:
     if is_testing:
         # Crée un modèle fictif pour les tests
         model = LogisticRegression()
-        X = np.random.rand(10, 536)  # Exemple de données (10 exemples, 536 caractéristiques)
-        y = np.random.randint(0, 2, 10)
-        
-        # Convertir les features en un format compatible avec ton modèle (ex: numpy array)
-        features_array = np.array(X).reshape(1, -1)  # Reshape si une seule instance
+        X = np.random.rand(1, 536)  # Exemple de données (10 exemples, 536 caractéristiques)
+        y = np.random.randint(0, 2, 1)
 
         # Ajuste le pipeline sur les données brutes
-        preprocessing_pipeline.fit(features_array)
+        preprocessing_pipeline.fit(X)
         
         # Prétraite les données pour l'entraînement du modèle
-        X_processed = preprocessing_pipeline.transform(features_array)
+        X_processed = preprocessing_pipeline.transform(X)
         
         # Entraîne le modèle sur les données prétraitées
         model.fit(X_processed, y)
