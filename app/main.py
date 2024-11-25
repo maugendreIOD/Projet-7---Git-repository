@@ -11,7 +11,7 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Test de test github actions test 23
+# Test de test github actions test 25
 
 # Définir le pipeline de prétraitement
 preprocessing_pipeline = Pipeline([
@@ -26,8 +26,8 @@ try:
     if is_testing:
         # Crée un modèle fictif pour les tests
         model = LogisticRegression()
-        X = np.random.rand(1, 536)  # Exemple de données (10 exemples, 536 caractéristiques)
-        y = np.random.randint(0, 2, 1)
+        X = np.random.rand(10, 536)  # Exemple de données (10 exemples, 536 caractéristiques)
+        y = np.random.randint(0, 2, 10)
 
         # Ajuste le pipeline sur les données brutes
         preprocessing_pipeline.fit(X)
