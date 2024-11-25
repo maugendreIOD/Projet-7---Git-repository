@@ -24,6 +24,7 @@ RUN touch /app/app/__init__.py
 # Copier le code de l'application
 COPY app/main.py /app/app/
 COPY app/linear_regression_model.pkl /app/app/
+COPY app/preprocessing_pipeline.pkl /app/app/
 COPY tests/test_api.py /app/tests/
 COPY tests/test_data.json /app/tests/
 
