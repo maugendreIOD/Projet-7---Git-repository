@@ -69,11 +69,8 @@ def predict():
         # Remplacer les -7777 par False
         features_df.replace(-7777, False, inplace=True)
 
-        # Convertir les features en un format compatible avec ton modèle (ex: numpy array)
-        features_array = np.array(features).reshape(1, -1)  # Reshape si une seule instance
-
         # Appliquer le pipeline de prétraitement
-        processed_features = preprocessing_pipeline.transform(features_array)
+        processed_features = preprocessing_pipeline.transform(features_df)
 
         # Utiliser le modèle pour prédire
         prediction = model.predict(processed_features)
