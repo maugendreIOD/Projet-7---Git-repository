@@ -126,7 +126,7 @@ if uploaded_file is not None:
                             feature_names=selected_data.columns
                         )
                         fig, ax = plt.subplots()
-                        shap.plots.waterfall(explanation, max_display=10, hsow=False)
+                        shap.plots.waterfall(explanation, max_display=10, show=False)
                         st.pyplot(fig)
                     else:
                         st.error(f"Erreur dans la réponse de l'API : {response.json().get('error', 'Erreur inconnue')}")
