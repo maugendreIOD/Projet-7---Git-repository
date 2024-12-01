@@ -67,9 +67,9 @@ if uploaded_file is not None:
                     with st.expander("Données de l'individu sélectionné :"):
                         st.write(selected_data)
                     
-                    payload = {
-                        "features": selected_data.to_dict(orient='records')[0]  # Accède directement au dictionnaire unique
-                    }
+                    # Transformez les données sélectionnées en liste de valeurs plutôt qu'en dictionnaire
+                    payload = {"features": selected_data.iloc[0].values.tolist()}
+
 
                     # Envoyer les données à l'API pour obtenir la prédiction
                     response = requests.post(api_url, json=payload)
