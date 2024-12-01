@@ -64,7 +64,7 @@ if uploaded_file is not None:
                     selected_data = data[data['SK_ID_CURR'] == selected_sk_id].drop(columns=['SK_ID_CURR'])
                     
                     # Remplacer les -9999 par NaN
-                    selected_data.replace(-9999, np.nan, inplace=True)
+                    selected_data.replace(-9999.0, np.nan, inplace=True)
                     # Remplacer les -8888 par False
                     selected_data.replace(-8888, True, inplace=True)
                     # Remplacer les -7777 par False
@@ -73,9 +73,10 @@ if uploaded_file is not None:
                     with st.expander("Données de l'individu sélectionné :"):
                         st.write(selected_data)
                     
-                    # Préparer les données pour l'API (envoyer uniquement les features sans 'SK_ID_CURR')
-                    payload = {"features": [float(value) if isinstance(value, (int, float)) else 0.0 
-                        for value in selected_data.iloc[0].tolist()]}  # Convertir les données en liste pour l'API
+                    payload = {
+                        "features": selected_data.to_dict(orient='records')[0]  # Accède directement au dictionnaire unique
+                    }
+
                     
                     # Envoyer les données à l'API pour obtenir la prédiction
                     response = requests.post(api_url, json=payload)
