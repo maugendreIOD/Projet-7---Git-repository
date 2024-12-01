@@ -62,13 +62,7 @@ if uploaded_file is not None:
                 if selected_sk_id != "Sélectionner un ID":
                     # Filtrer le DataFrame pour l'individu sélectionné
                     selected_data = data[data['SK_ID_CURR'] == selected_sk_id].drop(columns=['SK_ID_CURR'])
-                    
-                    # Remplacer les -9999 par NaN
-                    selected_data.replace(-9999.0, np.nan, inplace=True)
-                    # Remplacer les -8888 par False
-                    selected_data.replace(-8888, True, inplace=True)
-                    # Remplacer les -7777 par False
-                    selected_data.replace(-7777, False, inplace=True)
+
                     # Afficher les données de l'individu sélectionné
                     with st.expander("Données de l'individu sélectionné :"):
                         st.write(selected_data)
@@ -77,7 +71,6 @@ if uploaded_file is not None:
                         "features": selected_data.to_dict(orient='records')[0]  # Accède directement au dictionnaire unique
                     }
 
-                    
                     # Envoyer les données à l'API pour obtenir la prédiction
                     response = requests.post(api_url, json=payload)
                         

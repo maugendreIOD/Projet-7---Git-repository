@@ -59,6 +59,16 @@ def predict():
         if not features:
             return jsonify({'error': 'Aucune feature fournie'}), 400
 
+        # Convertir les features en un format compatible avec Pandas
+        features_df = pd.DataFrame([features])  # Convertir en DataFrame pour les transformations
+
+        # Remplacer les -9999 par NaN
+        features_df.replace(-9999.0, np.nan, inplace=True)
+        # Remplacer les -8888 par True
+        features_df.replace(-8888, True, inplace=True)
+        # Remplacer les -7777 par False
+        features_df.replace(-7777, False, inplace=True)
+
         # Convertir les features en un format compatible avec ton modèle (ex: numpy array)
         features_array = np.array(features).reshape(1, -1)  # Reshape si une seule instance
 
