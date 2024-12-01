@@ -68,7 +68,8 @@ if uploaded_file is not None:
                         st.write(selected_data)
                     
                     # Préparer les données pour l'API (envoyer uniquement les features sans 'SK_ID_CURR')
-                    payload = {"features": selected_data.values.tolist()[0]}  # Convertir les données en liste pour l'API
+                    payload = {"features": [float(value) if isinstance(value, (int, float)) else 0.0 
+                        for value in selected_data.iloc[0].tolist()]}  # Convertir les données en liste pour l'API
                     
                     # Envoyer les données à l'API pour obtenir la prédiction
                     response = requests.post(api_url, json=payload)
@@ -125,7 +126,7 @@ if uploaded_file is not None:
                             feature_names=selected_data.columns
                         )
                         fig, ax = plt.subplots()
-                        shap.plots.waterfall(explanation, max_display=10)
+                        shap.plots.waterfall(explanation, max_display=10, hsow=False)
                         st.pyplot(fig)
                     else:
                         st.error(f"Erreur dans la réponse de l'API : {response.json().get('error', 'Erreur inconnue')}")
