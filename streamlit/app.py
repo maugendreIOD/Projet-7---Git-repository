@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import shap
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from PIL import Image
 import joblib
 
@@ -88,8 +89,17 @@ if uploaded_file is not None:
                             color = "#4CAF50"  # Couleur verte pour approuvé
                         else:
                             decision = "Dossier d'emprunt risqué"
-                            color = "#FF5733"  # Couleur rouge pour rejeté
-                        
+                            color = "#FF0000"  # Couleur rouge pour rejeté
+
+                        fig = go.Figure(go.Indicator(
+                            mode="gauge+number",
+                            value=probability_reject,
+                            title={'text': "Probabilité de rejet (%)"},
+                            gauge={'axis': {'range': [0, 100]}, 
+                                'bar': {'color': "red" if probability_reject > 50 else "green"}}
+                        ))
+                        st.plotly_chart(fig)
+
                         # Encadré stylisé pour la décision et la probabilité
                         st.markdown(
                             f"""
@@ -157,6 +167,153 @@ if uploaded_file is not None:
                 
                 # Afficher le graphique dans Streamlit
                 st.pyplot(plt)
+                # Convertir 0/1 en Homme/Femme
+                genre = "Homme" if selected_data['CODE_GENDER'].iloc[0] == 1 else "Femme"
+                age = int(selected_data['DAYS_BIRTH'].iloc[0]/(-365))
+                st.markdown(f"""
+                ### Fiche client - {selected_sk_id}
+                - **Genre** : {genre}
+                - **Âge** : {age} ans
+                - **Revenu annuel** : {round(selected_data['AMT_INCOME_TOTAL'].iloc[0])} €
+                - **Montant emprunt** : {round(selected_data['AMT_CREDIT'].iloc[0])} €
+                - **Remboursement annuel** : {round(selected_data['AMT_ANNUITY'].iloc[0])} €
+                """)
+            
+            col3, col4 = st.columns([1, 1])
+
+            with col3:
+
+                # Liste des caractéristiques disponibles
+                features = selected_data.columns.tolist()
+
+                # Sélecteur interactif pour choisir une caractéristique
+                selected_feature = st.selectbox("Choisissez une caractéristique à visualiser :", features)
                 
+                # Valeur pour le client sélectionné
+                selected_value = selected_data[selected_feature].iloc[0]
+
+                # Histogramme stylisé
+                plt.figure(figsize=(10, 6))
+                plt.hist(data[selected_feature], bins=30, alpha=0.6, color='#4682B4', edgecolor='white', linewidth=1.5, label='Tous les clients')
+
+                # Ligne verticale pour le client sélectionné
+                plt.axvline(selected_value, color='#FF4500', linestyle='--', linewidth=3, label='Client sélectionné')
+
+                # Ajouter un fond légèrement gris
+                plt.gca().set_facecolor('#f9f9f9')
+
+                # Titre et labels personnalisés
+                plt.title(f'Distribution de {selected_feature}', fontsize=16, fontweight='bold', color='#333333')
+                plt.xlabel(selected_feature, fontsize=14, color='#555555')
+                plt.ylabel('Fréquence', fontsize=14, color='#555555')
+
+                # Style des ticks
+                plt.xticks(fontsize=12, color='#444444')
+                plt.yticks(fontsize=12, color='#444444')
+
+                # Légende stylisée
+                plt.legend(fontsize=12, frameon=True, shadow=True, loc='upper right')
+
+                # Bordure autour du graphique
+                plt.gca().spines['top'].set_visible(False)
+                plt.gca().spines['right'].set_visible(False)
+                plt.gca().spines['left'].set_color('#bbbbbb')
+                plt.gca().spines['bottom'].set_color('#bbbbbb')
+
+                # Afficher le graphique dans Streamlit
+                st.pyplot(plt)
+
+                st.markdown(f"""
+                ### Analyse de {selected_feature}
+                - La ligne rouge représente la valeur du client sélectionné.
+                - La distribution montre la répartition de {selected_feature} parmi les autres clients.
+                - Les chargés de relation peuvent ainsi voir si ce client est "typique" ou se distingue des autres clients sur cette caractéristique.
+                """)
+
+                # Widgets pour sélectionner deux variables
+                feature_x = st.selectbox("Choisissez la première caractéristique (X-axis) :", data.columns.tolist())
+                feature_y = st.selectbox("Choisissez la deuxième caractéristique (Y-axis) :", data.columns.tolist())
+
+                plt.figure(figsize=(10, 6))
+
+                # Création du scatter plot
+                plt.scatter(data[feature_x], data[feature_y], alpha=0.6, color='#4682B4', edgecolors='white', linewidth=0.7)
+
+                # Titre et étiquettes
+                plt.title(f'Relation entre {feature_x} et {feature_y}', fontsize=16, fontweight='bold', color='#333333')
+                plt.xlabel(feature_x, fontsize=14, color='#555555')
+                plt.ylabel(feature_y, fontsize=14, color='#555555')
+
+                # Grille stylisée
+                plt.grid(color='#dddddd', linestyle='--', linewidth=0.7, alpha=0.7)
+
+                st.pyplot(plt)
+
+                # Valeurs pour le client sélectionné
+                x_value = selected_data[feature_x].iloc[0]
+                y_value = selected_data[feature_y].iloc[0]
+
+                plt.scatter(x_value, y_value, color='#FF4500', s=100, label='Client sélectionné', edgecolors='black', linewidth=1.5)
+
+                # Annotation pour le client sélectionné
+                plt.annotate("Client sélectionné", (x_value, y_value), textcoords="offset points", xytext=(10, 10), ha='center',
+                            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.3'))
+
+                # Légende
+                plt.legend(fontsize=12, frameon=True, loc='upper right')
+
+                import seaborn as sns
+
+                # Identifier si l'une des variables est catégorique
+                is_feature_x_categorical = data[feature_x].nunique() < 10
+                is_feature_y_categorical = data[feature_y].nunique() < 10
+
+                if is_feature_x_categorical or is_feature_y_categorical:
+                    # Si l'une des variables est catégorique, afficher un boxplot
+                    plt.figure(figsize=(10, 6))
+                    if is_feature_x_categorical:
+                        sns.boxplot(x=feature_x, y=feature_y, data=data, palette="viridis")
+                    else:
+                        sns.boxplot(x=feature_y, y=feature_x, data=data, palette="viridis")
+
+                    # Ajouter le point du client sélectionné
+                    plt.scatter(x=x_value, y=y_value, color='#FF4500', s=100, label='Client sélectionné', edgecolors='black', linewidth=1.5)
+                    plt.legend(fontsize=12)
+                    plt.title(f"Boxplot de {feature_x} et {feature_y}")
+                    st.pyplot(plt)
+
+                else:
+                    # Si les deux variables sont continues, afficher un scatter plot
+                    plt.figure(figsize=(10, 6))
+                    plt.scatter(data[feature_x], data[feature_y], alpha=0.6, color='#4682B4', edgecolors='white', linewidth=0.7, label='Tous les clients')
+
+                    # Ajouter la valeur du client sélectionné
+                    plt.scatter(x_value, y_value, color='#FF4500', s=100, label='Client sélectionné', edgecolors='black', linewidth=1.5)
+
+                    plt.title(f'Relation entre {feature_x} et {feature_y}', fontsize=16, fontweight='bold', color='#333333')
+                    plt.xlabel(feature_x, fontsize=14, color='#555555')
+                    plt.ylabel(feature_y, fontsize=14, color='#555555')
+                    plt.legend(fontsize=12)
+                    st.pyplot(plt)
+
+                # Ajouter une heatmap seulement si les deux variables sont continues et calcul de corrélation possible
+                if not is_feature_x_categorical and not is_feature_y_categorical:
+                    heatmap_data = data[[feature_x, feature_y]].corr()
+
+                    plt.figure(figsize=(8, 6))
+                    sns.heatmap(heatmap_data, annot=True, cmap="coolwarm", cbar=True, square=True)
+                    plt.title(f"Heatmap de {feature_x} et {feature_y}")
+                    st.pyplot(plt)
+
+                # Explication interactive
+                st.markdown(f"""
+                ### Analyse Bi-variée
+                - Ce graphique montre la relation entre **{feature_x}** et **{feature_y}**.
+                - Le point rouge représente la position du client sélectionné.
+                - Vous pouvez identifier si ce client est une exception ou suit les tendances générales.
+                """)
+
+
+
     except Exception as e:
         st.error(f"Erreur lors du chargement du fichier JSON : {str(e)}")
