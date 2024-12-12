@@ -1,2 +1,3 @@
 # Ignorer le dossier contenant les images
 POC BLIP/
+gradio_env/
