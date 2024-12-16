@@ -23,18 +23,21 @@ explainer = joblib.load(explainer_path)
 pipeline_retenu_path = os.path.join("streamlit", "preprocessing_pipeline.pkl")
 pipeline_retenu = joblib.load(pipeline_retenu_path)
 
+top_features_path = os.path.join("streamlit", 'top_features.csv')
 
 # Configurer la page Streamlit
 st.set_page_config(page_title="Prédictions d'un modèle de scoring bancaire", page_icon="dart", layout="wide", initial_sidebar_state="auto")
 
 # Charger et afficher le logo
-logo = Image.open("logo_open_classroom.png")
+logo_path = os.path.join("streamlit", "logo_open_classroom.png")
+logo = Image.open(logo_path)
+
 st.image(logo, width=700)
 st.title("Prédictions d'un modèle de scoring bancaire")
 
 # Charger le fichier d'importance des features
 try:
-    top_features = pd.read_csv('top_features.csv')
+    top_features = pd.read_csv(top_features_path)
 except FileNotFoundError:
     st.error("Le fichier 'top_features.csv' est introuvable.")
 
