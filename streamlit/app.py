@@ -11,17 +11,18 @@ from PIL import Image
 import joblib
 import os
 
-explainer_path = os.path.join("streamlit", "shap_explainer.joblib")
-explainer = joblib.load(explainer_path)
+
 
 
 # URL de ton API Flask locale pour la prédiction
 api_url = 'https://openclassrooms-api-2-262775559739.us-central1.run.app/predict'
 
+explainer_path = os.path.join("streamlit", "shap_explainer.joblib")
+explainer = joblib.load(explainer_path)
 
+pipeline_retenu_path = os.path.join("streamlit", "preprocessing_pipeline.pkl")
+pipeline_retenu = joblib.load(pipeline_retenu_path)
 
-# Charger le pipeline de pré-traitement
-pipeline_retenu = joblib.load("preprocessing_pipeline.pkl")
 
 # Configurer la page Streamlit
 st.set_page_config(page_title="Prédictions d'un modèle de scoring bancaire", page_icon="dart", layout="wide", initial_sidebar_state="auto")
