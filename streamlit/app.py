@@ -9,12 +9,16 @@ import plotly.graph_objects as go
 import seaborn as sns
 from PIL import Image
 import joblib
+import os
+
+explainer_path = os.path.join("streamlit", "shap_explainer.joblib")
+explainer = joblib.load(explainer_path)
+
 
 # URL de ton API Flask locale pour la prédiction
 api_url = 'https://openclassrooms-api-2-262775559739.us-central1.run.app/predict'
 
-# Charger l'explainer SHAP local
-explainer = joblib.load('shap_explainer.joblib')  # Explainer SHAP local
+
 
 # Charger le pipeline de pré-traitement
 pipeline_retenu = joblib.load("preprocessing_pipeline.pkl")
