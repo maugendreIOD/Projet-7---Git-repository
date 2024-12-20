@@ -113,14 +113,22 @@ if uploaded_file is not None:
                                 decision = "Dossier d'emprunt risqué"
                                 color = "#FF0000"  # Couleur rouge pour rejeté
 
-                            fig = go.Figure(go.Indicator(
-                                mode="gauge+number",
+                            fig.add_trace(go.Indicator(
+                                mode="gauge+number+delta",
                                 value=probability_reject,
                                 title={'text': "Probabilité de rejet (%)"},
-                                gauge={'axis': {'range': [0, 100]}, 
-                                    'bar': {'color': "red" if probability_reject > 50 else "green"}}
+                                delta={'reference': 50},  # Exemple d'ajout de contexte
+                                gauge={
+                                    'axis': {'range': [0, 100]},
+                                    'bar': {'color': "red" if probability_reject > 50 else "green"},
+                                    'steps': [
+                                        {'range': [0, 50], 'color': 'lightgreen'},
+                                        {'range': [50, 100], 'color': 'pink'}
+                                    ]
+                                }
                             ))
                             st.plotly_chart(fig)
+                            st.write("Graphique de jauge indiquant la probabilité de rejet (%) basée sur les caractéristiques du client.")
 
                             # Encadré stylisé pour la décision et la probabilité
                             st.markdown(
@@ -202,6 +210,7 @@ if uploaded_file is not None:
                         fig, ax = plt.subplots()
                         shap.plots.waterfall(explanation, max_display=10, show=False)
                         st.pyplot(fig)
+                        st.write("Le graphique Waterfall SHAP ci-dessous explique les contributions des caractéristiques individuelles au résultat prédictif.")
 
                 with col2A:
                     st.header("Top 10 des variables importantes du modèle")
