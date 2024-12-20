@@ -116,11 +116,16 @@ if uploaded_file is not None:
                             # Création de la figure
                             fig = go.Figure()
                             
+                            # Ajouter le trace Indicator
                             fig.add_trace(go.Indicator(
                                 mode="gauge+number+delta",
                                 value=probability_reject,
                                 title={'text': "Probabilité de rejet (%)"},
-                                delta={'reference': 50},  # Exemple d'ajout de contexte
+                                delta={
+                                    'reference': 50,
+                                    'increasing': {'color': "red"},   # Couleur rouge pour une augmentation au-dessus de la référence
+                                    'decreasing': {'color': "green"} # Couleur verte pour une baisse en dessous de la référence
+                                },
                                 gauge={
                                     'axis': {'range': [0, 100]},
                                     'bar': {'color': "red" if probability_reject > 50 else "green"},
@@ -130,6 +135,43 @@ if uploaded_file is not None:
                                     ]
                                 }
                             ))
+
+                            # Ajouter des annotations (libellés explicatifs)
+                            fig.add_annotation(
+                                x=0.2, y=0.5,
+                                text="Risque faible",
+                                showarrow=False,
+                                font=dict(size=12, color="darkgreen"),
+                                align="center"
+                            )
+
+                            fig.add_annotation(
+                                x=0.8, y=0.5,
+                                text="Risque élevé",
+                                showarrow=False,
+                                font=dict(size=12, color="darkred"),
+                                align="center"
+                            )
+
+                            # Rendre le graphique responsive
+                            fig.update_layout(
+                                annotations=[
+                                    dict(
+                                        x=0.2, y=0.5,
+                                        text="Risque faible",
+                                        showarrow=False,
+                                        font=dict(size=12, color="darkgreen"),
+                                        align="center"
+                                    ),
+                                    dict(
+                                        x=0.8, y=0.5,
+                                        text="Risque élevé",
+                                        showarrow=False,
+                                        font=dict(size=12, color="darkred"),
+                                        align="center"
+                                    )
+                                ]
+                            )
                             st.plotly_chart(fig)
                             st.write("Graphique de jauge indiquant la probabilité de rejet (%) basée sur les caractéristiques du client.")
 
