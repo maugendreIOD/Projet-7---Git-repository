@@ -184,7 +184,7 @@ if uploaded_file is not None:
                                     background-color: {color}; 
                                     color: white; 
                                     text-align: center;
-                                    font-size: 18px;
+                                    font-size: 1.2em;
                                     font-weight: bold;">
                                     {decision}<br>
                                     Probabilité de rejet: {probability_reject:.2f}%
