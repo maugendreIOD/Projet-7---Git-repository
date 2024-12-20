@@ -192,17 +192,6 @@ if uploaded_file is not None:
                                 """,
                                 unsafe_allow_html=True
                             )
-                            
-                            st.markdown(
-                            """
-                            <style>
-                            .reportview-container .main .block-container {
-                                font-size: 1.2em;  /* Texte adaptable */
-                            }
-                            </style>
-                            """,
-                            unsafe_allow_html=True
-                            )
 
 
                         else:
@@ -232,7 +221,7 @@ if uploaded_file is not None:
                                 color: #333;
                                 ">
                                 <h3 style="text-align: center; color: #001F54;">Client - {selected_sk_id}</h3>
-                                <ul style="list-style: none; padding: 0; font-size: 16px;">
+                                <ul style="list-style: none; padding: 0; font-size: 1.2em;">
                                     <li><strong>Genre :</strong> {genre}</li>
                                     <li><strong>Âge :</strong> {age} ans</li>
                                     <li><strong>Revenu annuel :</strong> {round(selected_data['AMT_INCOME_TOTAL'].iloc[0]):,} €</li>
