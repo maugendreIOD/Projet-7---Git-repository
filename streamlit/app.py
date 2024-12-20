@@ -192,6 +192,17 @@ if uploaded_file is not None:
                                 """,
                                 unsafe_allow_html=True
                             )
+                            
+                            st.markdown(
+                            """
+                            <style>
+                            .reportview-container .main .block-container {
+                                font-size: 1.2em;  /* Texte adaptable */
+                            }
+                            </style>
+                            """,
+                            unsafe_allow_html=True
+                            )
 
 
                         else:
