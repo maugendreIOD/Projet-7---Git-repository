@@ -112,7 +112,10 @@ if uploaded_file is not None:
                             else:
                                 decision = "Dossier d'emprunt risqué"
                                 color = "#FF0000"  # Couleur rouge pour rejeté
-
+                            
+                            # Création de la figure
+                            fig = go.Figure()
+                            
                             fig.add_trace(go.Indicator(
                                 mode="gauge+number+delta",
                                 value=probability_reject,
